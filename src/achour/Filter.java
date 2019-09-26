@@ -20,7 +20,7 @@ public class Filter implements Runnable {
     public void run() {
         int current;
         try {
-            while (!consume.isTerminated()) {
+            while (true) {
                 current = consume.retrieve();
 
                 if (current % myNumber != 0) {
@@ -30,9 +30,15 @@ public class Filter implements Runnable {
                         produce.offer(current);
                 }
             }
-            produce.terminate();
         } catch (Exception e) {
             System.out.println("Error in " + this.toString());
+        } catch (FilterEndException e) {
+            try {
+                produce.terminate();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("Filtre " + myNumber + " terminé (FilterEndException).");
         }
     }
 }

@@ -14,7 +14,9 @@ public class Buffer {
         notify();
     }
 
-    public synchronized int retrieve() throws InterruptedException {
+    public synchronized int retrieve() throws InterruptedException, FilterEndException {
+        if (terminated)
+            throw new FilterEndException();
         if (!canConsume)
             wait();
         notify();
